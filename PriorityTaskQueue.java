@@ -1,5 +1,6 @@
 package thread.pool;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -8,7 +9,8 @@ public class PriorityTaskQueue implements TaskQueueInterface{
     public static final int NORMAL_PRIORITY = 5;
     public static final int MIN_PRIORITY = 1;
     private final TaskNode taskLink;
-    private volatile int count;
+    private AtomicInteger count;
+
     private final int limit;
     int kind = 1;
 
@@ -29,7 +31,8 @@ public class PriorityTaskQueue implements TaskQueueInterface{
                 return MAX_PRIORITY;
             }
         };
-        this.count = 0;
+        //this.count = 0;
+        count.set(0);
         this.limit = limit;
     }
 
@@ -37,7 +40,7 @@ public class PriorityTaskQueue implements TaskQueueInterface{
     public void push(Task task) {
         try{
             lock.writeLock().lock();
-            while (count>=limit) writeCondition.await();
+            while (count.get()>=limit) writeCondition.await();
             TaskNode p = this.taskLink;
             while (p.next!=null){
                 if(p.next.compareTo(task)) p = p.next;
@@ -47,7 +50,7 @@ public class PriorityTaskQueue implements TaskQueueInterface{
             node.task = task;
             if(p.next!=null)node.next = p.next;
             p.next = node;
-            count++;
+            count.incrementAndGet();
             writeCondition.signalAll();
         }catch (InterruptedException ignored){}
         finally {
@@ -59,10 +62,10 @@ public class PriorityTaskQueue implements TaskQueueInterface{
     public Task pop() {
         try {
             lock.writeLock().lock();
-            while (count==0) writeCondition.await();
+            while (count.get()==0) writeCondition.await();
             TaskNode p = this.taskLink.next;
             this.taskLink.next = this.taskLink.next.next;
-            count--;
+            count.decrementAndGet();
             writeCondition.signalAll();
             return p.task;
         }catch (InterruptedException e){
@@ -85,7 +88,7 @@ public class PriorityTaskQueue implements TaskQueueInterface{
     public int getCount() {
         try {
             lock.readLock().lock();
-            return count;
+            return count.get();
         }finally {
             lock.readLock().unlock();
         }
