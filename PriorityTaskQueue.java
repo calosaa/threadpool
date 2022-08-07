@@ -9,7 +9,7 @@ public class PriorityTaskQueue implements TaskQueueInterface{
     public static final int NORMAL_PRIORITY = 5;
     public static final int MIN_PRIORITY = 1;
     private final TaskNode taskLink;
-    private AtomicInteger count;
+    private final AtomicInteger count = new AtomicInteger();
 
     private final int limit;
     int kind = 1;

@@ -5,9 +5,12 @@ public class ThreadPool {
     public static final int MINIMUM_CAPACITY = 3;// close extend pool when smaller than this
 
     private TaskQueueInterface queue;
+    //任务队列长度
     private int limit = 100;
     private TaskThread[] threadPool;
+    //线程池容量
     private final int poolSize;
+    //扩展容量
     private int extend = 0;
 
     public ThreadPool(int size){

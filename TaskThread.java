@@ -5,7 +5,7 @@ public class TaskThread extends Thread{
     private volatile boolean onTask = false;
     private final TaskQueueInterface taskQueue;
     private boolean temporary = false;
-    private volatile boolean waiting;
+    private volatile boolean waiting = true;
 
     public TaskThread(TaskQueueInterface queue){
         this.taskQueue = queue;

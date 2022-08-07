@@ -1,8 +1,12 @@
-package thread;
+package thread.pool;
 
 
 import thread.pool.Task;
 import thread.pool.ThreadPool;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class ThreadMain {
     public static void main(String[] args) throws InterruptedException {
@@ -10,7 +14,7 @@ public class ThreadMain {
         pool.startService(1);
         Object lock = new Object();
 
-        for (int i = 1; i <= 10; i++) {
+        /*for (int i = 1; i <= 10; i++) {
             int finalI = i;
             pool.addTask(new Task() {
                 @Override
@@ -22,11 +26,63 @@ public class ThreadMain {
 
                 }
 
-                /*public int priority() {
+                *//*public int priority() {
                     return finalI;
-                }*/
+                }*//*
             });
-        }
+        }*/
+        ReentrantLock rlock = new ReentrantLock();
+        Condition condition = rlock.newCondition();
+        final boolean[] c = {true};
+        pool.addTask(new Task() {
+
+            @Override
+            public void run() {
+                for (int i = 0; i < 10; i++) {
+                    try {
+                        rlock.lock();
+                        while (!c[0]) condition.await();
+                        System.out.println("A");
+                        c[0] = false;
+                        condition.signalAll();
+                    } catch (InterruptedException e){
+                        e.printStackTrace();
+                    }finally {
+                        rlock.unlock();
+                    }
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(100);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+            }
+        });
+        pool.addTask(new Task() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 10; i++) {
+                    try {
+                        rlock.lock();
+                        while (c[0]) condition.await();
+                        System.out.println("B");
+                        c[0] = true;
+                        condition.signalAll();
+                    }catch (InterruptedException e){
+                        e.printStackTrace();
+                    }finally {
+                        rlock.unlock();
+                    }
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(100);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+            }
+        });
         //Thread.sleep(5000);
         pool.closeService();
 
