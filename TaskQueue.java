@@ -1,6 +1,7 @@
 package thread.pool;
 
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -9,7 +10,7 @@ public class TaskQueue implements TaskQueueInterface{
     private final int size;
     private volatile int start = 0;
     private volatile int end = 0;
-    private volatile int count = 0;
+    private final AtomicInteger count = new AtomicInteger();
 
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     private final Condition writeCondition = lock.writeLock().newCondition();
@@ -17,6 +18,7 @@ public class TaskQueue implements TaskQueueInterface{
     public TaskQueue(int limit){
         this.size = limit + 1;
         this.list = new Task[limit+1];
+        this.count.set(0);
     }
 
     @Override
@@ -26,7 +28,7 @@ public class TaskQueue implements TaskQueueInterface{
             while((end+1)%size==start) writeCondition.await();
             list[end] = t;
             end = (end+1)%size;
-            count++;
+            count.incrementAndGet();
             System.out.println("输入");
             writeCondition.signalAll();
         }catch (InterruptedException ignored){
@@ -42,7 +44,7 @@ public class TaskQueue implements TaskQueueInterface{
             while(end==start) writeCondition.await();
             Task t = list[start];
             start = (start+1)%size;
-            count--;
+            count.decrementAndGet();
             System.out.println("输出");
             writeCondition.signalAll();
             return t;
@@ -61,8 +63,8 @@ public class TaskQueue implements TaskQueueInterface{
     public int getCount() {
         try {
             lock.readLock().lock();
-            System.out.println(count);
-            return count;
+            int result = count.get();
+            return result;
         }finally {
             lock.readLock().unlock();
         }

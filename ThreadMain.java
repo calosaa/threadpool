@@ -10,11 +10,11 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class ThreadMain {
     public static void main(String[] args) throws InterruptedException {
-        ThreadPool pool = new ThreadPool(10,5,2);
+        ThreadPool pool = new ThreadPool(10,3,0);
         pool.startService(1);
         Object lock = new Object();
 
-        /*for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 9; i++) {
             int finalI = i;
             pool.addTask(new Task() {
                 @Override
@@ -26,18 +26,19 @@ public class ThreadMain {
 
                 }
 
-                *//*public int priority() {
+                public int priority() {
                     return finalI;
-                }*//*
+                }
             });
-        }*/
-        ReentrantLock rlock = new ReentrantLock();
+        }
+/*        ReentrantLock rlock = new ReentrantLock();
         Condition condition = rlock.newCondition();
         final boolean[] c = {true};
         pool.addTask(new Task() {
 
             @Override
             public void run() {
+                System.out.println("1");
                 for (int i = 0; i < 10; i++) {
                     try {
                         rlock.lock();
@@ -56,12 +57,15 @@ public class ThreadMain {
                         throw new RuntimeException(e);
                     }
                 }
-
+            }
+            public int priority(){
+                return 5;
             }
         });
         pool.addTask(new Task() {
             @Override
             public void run() {
+                System.out.println("2");
                 for (int i = 0; i < 10; i++) {
                     try {
                         rlock.lock();
@@ -82,7 +86,10 @@ public class ThreadMain {
                 }
 
             }
-        });
+            public int priority(){
+                return 6;
+            }
+        });*/
         //Thread.sleep(5000);
         pool.closeService();
 

@@ -9,7 +9,7 @@ public class PriorityTaskQueue implements TaskQueueInterface{
     public static final int NORMAL_PRIORITY = 5;
     public static final int MIN_PRIORITY = 1;
     private final TaskNode taskLink;
-    private final AtomicInteger count = new AtomicInteger();
+    private volatile AtomicInteger count = new AtomicInteger();
 
     private final int limit;
     int kind = 1;
@@ -88,7 +88,8 @@ public class PriorityTaskQueue implements TaskQueueInterface{
     public int getCount() {
         try {
             lock.readLock().lock();
-            return count.get();
+            int result = count.get();
+            return result;
         }finally {
             lock.readLock().unlock();
         }
