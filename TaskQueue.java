@@ -15,6 +15,7 @@ public class TaskQueue implements TaskQueueInterface{
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     private final Condition writeCondition = lock.writeLock().newCondition();
 
+    private boolean empty = false;
     public TaskQueue(int limit){
         this.size = limit + 1;
         this.list = new Task[limit+1];
@@ -63,11 +64,14 @@ public class TaskQueue implements TaskQueueInterface{
     public int getCount() {
         try {
             lock.readLock().lock();
-            int result = count.get();
-            return result;
+            return count.get();
         }finally {
             lock.readLock().unlock();
         }
     }
 
+    @Override
+    public boolean isEmpty() {
+        return getCount()==0;
+    }
 }

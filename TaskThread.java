@@ -36,9 +36,13 @@ public class TaskThread extends Thread{
     }
     public void close(){
         this.running = false;
-        if(waiting)interrupt();
+        interrupt();
     }
 
+    /**
+     * 当此线程为 临时或扩展（temporary变量标记）线程 且 任务队列计数<ThreadPool.MINIMUM_CAPACITY时，返回true, 自动关闭此线程
+     * @return
+     */
     public boolean checkTaskContains(){
         if(temporary && taskQueue.getCount()<ThreadPool.MINIMUM_CAPACITY){
             return true;

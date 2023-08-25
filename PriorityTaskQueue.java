@@ -12,7 +12,6 @@ public class PriorityTaskQueue implements TaskQueueInterface{
     private volatile AtomicInteger count = new AtomicInteger();
 
     private final int limit;
-    int kind = 1;
 
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     private final Condition writeCondition = lock.writeLock().newCondition();
@@ -28,7 +27,7 @@ public class PriorityTaskQueue implements TaskQueueInterface{
 
             @Override
             public int priority() {
-                return MAX_PRIORITY;
+                return 11;
             }
         };
         //this.count = 0;
@@ -88,11 +87,15 @@ public class PriorityTaskQueue implements TaskQueueInterface{
     public int getCount() {
         try {
             lock.readLock().lock();
-            int result = count.get();
-            return result;
+            return count.get();
         }finally {
             lock.readLock().unlock();
         }
 
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return getCount()==0;
     }
 }
