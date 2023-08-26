@@ -43,6 +43,7 @@ pool.addTask(new Task() {
 pool.currentOnTaskThreads();  // 执行任务中的线程数量
 pool.currentOnWaitingThreads();  // 等待分配任务中的线程数量
 pool.onActiveThreads();  //活跃的线程数量
+pool.message() //获取当前线程池运行数据（活跃线程数量，执行中的线程数量，空闲线程数量，等待队列中的任务数量，已完成的任务数量）
 ```
 ## 异步
 > AsyncTask类 继承 Task类
