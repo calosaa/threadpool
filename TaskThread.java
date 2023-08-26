@@ -1,18 +1,22 @@
 package thread.pool;
 
 public class TaskThread extends Thread{
+
+    private String id;
     private volatile boolean running = true;
     private volatile boolean onTask = false;
     private final TaskQueueInterface taskQueue;
     private boolean temporary = false;
     private volatile boolean waiting = true;
 
+    @Deprecated
     public TaskThread(TaskQueueInterface queue){
         this.taskQueue = queue;
     }
     public TaskThread(TaskQueueInterface queue,boolean temporary){
         this.taskQueue = queue;
         this.temporary = temporary;
+        this.id = ThreadIdGenerator.generate(temporary);
     }
     @Override
     public void run() {
@@ -25,6 +29,7 @@ public class TaskThread extends Thread{
             if(task!=null) {
                 onTask = true;
                 setPriority(task.priority());
+                task.settId(this.id);
                 task.run();
                 onTask = false;
             }

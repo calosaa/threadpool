@@ -15,7 +15,6 @@ public class TaskQueue implements TaskQueueInterface{
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     private final Condition writeCondition = lock.writeLock().newCondition();
 
-    private boolean empty = false;
     public TaskQueue(int limit){
         this.size = limit + 1;
         this.list = new Task[limit+1];
@@ -30,7 +29,7 @@ public class TaskQueue implements TaskQueueInterface{
             list[end] = t;
             end = (end+1)%size;
             count.incrementAndGet();
-            System.out.println("输入");
+            //System.out.println("输入");
             writeCondition.signalAll();
         }catch (InterruptedException ignored){
         }finally {
@@ -46,7 +45,7 @@ public class TaskQueue implements TaskQueueInterface{
             Task t = list[start];
             start = (start+1)%size;
             count.decrementAndGet();
-            System.out.println("输出");
+            //System.out.println("输出");
             writeCondition.signalAll();
             return t;
         }catch (InterruptedException e){

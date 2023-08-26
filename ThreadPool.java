@@ -71,7 +71,7 @@ public class ThreadPool {
                     this.threadPool[i + poolSize].start();
                 }
             }
-            System.out.println("扩展");
+            System.out.println("扩展线程池");
         }
     }
 
