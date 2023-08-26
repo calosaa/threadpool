@@ -1,5 +1,7 @@
 package thread.pool;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class ThreadPool {
 
     public static final int MINIMUM_CAPACITY = 3;// 任务队列的最小容量，当当前任务计数小于此值时，自动关闭扩展池，详见 #TaskThread.checkTaskContains()
@@ -14,6 +16,8 @@ public class ThreadPool {
     private int extend = 0;
 
     private boolean stop = false;
+
+    public static final AtomicInteger finish = new AtomicInteger();
 
     public ThreadPool(int size){
         this.poolSize = size;
@@ -149,4 +153,22 @@ public class ThreadPool {
         }).start();
     }
 
+    public int getWaitingTasks(){
+        return queue.getCount();
+    }
+
+    public String message(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("active threads: ")
+                .append(onActiveThreads())
+                .append(", running tasks: ")
+                .append(currentOnTaskThreads())
+                .append(", free threads: ")
+                .append(currentOnWaitingThreads())
+                .append(", waiting tasks: ")
+                .append(getWaitingTasks())
+                .append(", finished: ")
+                .append(finish.get());
+        return sb.toString();
+    }
 }

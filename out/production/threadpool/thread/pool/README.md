@@ -1,4 +1,5 @@
 # 线程池
+支持异步（或着：同步、异步混合），支持线程池动态扩展，支持缓冲队列及优先队列
 ## 启动
 ```java
 //方法一
@@ -27,7 +28,7 @@ pool.addTask(new Task() {
             //gettid() 获得执行线程的id,一般线程 'pool:1',扩展线程 'extend:1'
             }
     
-    public int priority() {
+    public int priority() {  //可以不写，默认5
             return 1; //优先值从大到小:10>1 ,max=10, mini=1
             }
 });
@@ -43,7 +44,25 @@ pool.currentOnTaskThreads();  // 执行任务中的线程数量
 pool.currentOnWaitingThreads();  // 等待分配任务中的线程数量
 pool.onActiveThreads();  //活跃的线程数量
 ```
-
+## 异步
+> AsyncTask类 继承 Task类
+```java
+        AsyncTask<String> task = new AsyncTask<String>() { //这里设置返回类型为String
+            @Override
+            public void run() {
+                    try {
+                        TimeUnit.SECONDS.sleep(5);
+                        setResult("i'm done 1 !!!");  //设置返回值
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+            }
+        };
+        
+        pool.addTask(task)
+        while (!task.isDone());  //判断任务是否执行完毕
+        System.out.println(task.getResult());  //获取返回值
+```
 ## 结束
 ```java
 pool.closeService(); //关闭等待队列，等待剩余任务执行完毕

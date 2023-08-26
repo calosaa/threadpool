@@ -12,6 +12,7 @@ public class TaskQueue implements TaskQueueInterface{
     private volatile int end = 0;
     private final AtomicInteger count = new AtomicInteger();
 
+
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     private final Condition writeCondition = lock.writeLock().newCondition();
 

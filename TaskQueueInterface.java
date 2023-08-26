@@ -7,4 +7,5 @@ public interface TaskQueueInterface {
 
     boolean isEmpty();
 
+
 }

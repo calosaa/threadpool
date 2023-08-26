@@ -9,6 +9,8 @@ public class TaskThread extends Thread{
     private boolean temporary = false;
     private volatile boolean waiting = true;
 
+
+
     @Deprecated
     public TaskThread(TaskQueueInterface queue){
         this.taskQueue = queue;
@@ -31,6 +33,8 @@ public class TaskThread extends Thread{
                 setPriority(task.priority());
                 task.settId(this.id);
                 task.run();
+                task.done();
+                ThreadPool.finish.incrementAndGet();
                 onTask = false;
             }
         }
