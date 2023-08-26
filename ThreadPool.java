@@ -57,7 +57,10 @@ public class ThreadPool {
         if(queue.getCount()<limit) {
             queue.push(task);
             return true;
-        }else return false;
+        }else {
+            System.out.println("添加失败");
+            return false;
+        }
     }
 
     /**
@@ -65,13 +68,15 @@ public class ThreadPool {
      */
     public void extendPool(){
         if(extend>0){
+            System.out.println("尝试扩展线程");
             for (int i = 0; i < extend; i++) {
                 if(this.threadPool[i+poolSize]==null || !this.threadPool[i+poolSize].isAlive()) {
                     this.threadPool[i + poolSize] = ThreadFactory.create(queue, true);
                     this.threadPool[i + poolSize].start();
+                    System.out.println("扩展线程+1");
                 }
             }
-            System.out.println("扩展线程池");
+
         }
     }
 

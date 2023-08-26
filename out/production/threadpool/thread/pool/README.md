@@ -24,7 +24,7 @@ pool.addTask(new Task() {
     @Override
     public void run() {
             // do something
-    
+            //gettid() 获得执行线程的id,一般线程 'pool:1',扩展线程 'extend:1'
             }
     
     public int priority() {
