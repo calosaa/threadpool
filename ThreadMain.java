@@ -54,6 +54,7 @@ public class ThreadMain {
         };
         pool.addTask(task);
         pool.addTask(task2);
+        task.cancel();
         while (!task.isDone() && !task2.isDone());
         System.out.println(task.getResult());
         System.out.println(task2.getResult());

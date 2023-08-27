@@ -43,6 +43,9 @@ pool.addTask(new Task() {
 pool.currentOnTaskThreads();  // 执行任务中的线程数量
 pool.currentOnWaitingThreads();  // 等待分配任务中的线程数量
 pool.onActiveThreads();  //活跃的线程数量
+pool.message() //获取当前线程池运行数据（活跃线程数量，执行中的线程数量，空闲线程数量，等待队列中的任务数量，已完成的任务数量）
+        
+task.cancel() //当任务处在等待队列中时，可以被取消
 ```
 ## 异步
 > AsyncTask类 继承 Task类
@@ -69,6 +72,7 @@ pool.closeService(); //关闭等待队列，等待剩余任务执行完毕
 pool.shutdown();  //删除等待队列中的任务，等待所有线程执行完毕
 ```
 
+### 大家觉得没问题麻烦给个星，如果有问题敬请提出，遇到了技术瓶颈不知道怎么提升，你的意见是对我最大的帮助，谢谢！！！
 
-
+### qq交流群： 881241271
 

@@ -32,9 +32,12 @@ public class TaskThread extends Thread{
                 onTask = true;
                 setPriority(task.priority());
                 task.settId(this.id);
-                task.run();
-                task.done();
-                ThreadPool.finish.incrementAndGet();
+                if(!task.isCanceled()) {
+                    task.start();
+                    task.run();
+                    task.done();
+                    ThreadPool.finish.incrementAndGet();
+                }
                 onTask = false;
             }
         }

@@ -4,6 +4,9 @@ public abstract class Task{
 
     private String tId;  //thread id
 
+    private volatile boolean canceled = false;
+
+    private volatile boolean start = false;
     protected volatile boolean done = false;
 
     public void settId(String thId){
@@ -25,6 +28,19 @@ public abstract class Task{
 
     public void done(){
         this.done = true;
+    }
+
+
+    public void start(){
+        this.start = true;
+    }
+    public void cancel(){
+        if (!this.start) this.canceled = true;
+        else System.out.println("任务已经开始执行，无法取消");
+    }
+
+    public boolean isCanceled(){
+        return this.canceled;
     }
 
 }

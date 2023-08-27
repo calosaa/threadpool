@@ -24,6 +24,4 @@ public class ThreadFactory {
         }
         return new TaskQueue(limit);
     }
-
-
 }
