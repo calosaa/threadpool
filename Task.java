@@ -4,6 +4,7 @@ public abstract class Task{
 
     private String tId;  //thread id
 
+    private static final String TASK_INFO = "Normal Task";
     private volatile boolean canceled = false;
 
     private volatile boolean start = false;
@@ -16,10 +17,14 @@ public abstract class Task{
     public String gettId(){
         return tId;
     }
-    public abstract void run();
+    public abstract void run() throws Exception;
 
     public int priority(){
         return PriorityTaskQueue.NORMAL_PRIORITY;
+    }
+
+    public String taskInfo() {
+        return TASK_INFO;
     }
 
     public boolean isDone(){

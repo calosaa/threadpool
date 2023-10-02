@@ -71,8 +71,32 @@ task.cancel() //当任务处在等待队列中时，可以被取消
 pool.closeService(); //关闭等待队列，等待剩余任务执行完毕
 pool.shutdown();  //删除等待队列中的任务，等待所有线程执行完毕
 ```
+### 2023/10/02 更新
+1. 新增线程重启功能
+```java
+threadpool.reCreate(idx); //idx : 线程池中线程的索引
+```
+2. 新增线程任务运行记录功能,捕获Task中的异常
+```java
+ ThreadPool tp = new ThreadPool(3);
+tp.setRecorde(true); // 在这里设置记录功能
+tp.startService(0);
 
-### 大家觉得没问题麻烦给个星，如果有问题敬请提出，遇到了技术瓶颈不知道怎么提升，你的意见是对我最大的帮助，谢谢！！！
+List<String> infos = taskThread.getTaskInfos(); //获取线程运行记录
+//{info : Normal Task, done : true, time : 2023-10-02 19:08:39, exception : / by zero}
 
-### qq交流群： 881241271
-
+//重写Task类中的 #public String taskInfo()； 方法来设置对task的描述，该描述将会记录在线程运行记录中的info值，默认值为 ： Normal Task
+#Task.class
+public String taskInfo() {
+        return TASK_INFO;
+        }
+#
+```
+3.新增获取停止运行的线程的索引及 ThreadId
+```java
+Map<Integer, String> closeIds = threadPool.oncloseThreads();
+```
+4.新增获取线程
+```java
+threadPool.getThread(idx); //idx : 线程索引
+```

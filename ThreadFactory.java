@@ -8,8 +8,8 @@ public class ThreadFactory {
      * @param temporary
      * @return
      */
-    public static TaskThread create(TaskQueueInterface queue,boolean temporary){
-        return new TaskThread(queue,temporary);
+    public static TaskThread create(TaskQueueInterface queue,boolean temporary, boolean recorde){
+        return new TaskThread(queue,temporary, recorde);
     }
 
     /**

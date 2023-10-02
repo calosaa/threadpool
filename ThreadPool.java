@@ -1,5 +1,9 @@
 package thread.pool;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ThreadPool {
@@ -19,6 +23,10 @@ public class ThreadPool {
 
     public static final AtomicInteger finish = new AtomicInteger();
 
+    private boolean recorde = false;
+
+
+
     public ThreadPool(int size){
         this.poolSize = size;
     }
@@ -35,16 +43,18 @@ public class ThreadPool {
         this.extend = extend;
     }
 
-
     public void startService(int queueKind){
         this.threadPool = new TaskThread[poolSize+extend];
         this.queue = ThreadFactory.createTaskQueue(queueKind,limit);
         for (int i = 0; i < poolSize; i++) {
-            this.threadPool[i] = ThreadFactory.create(this.queue,false);
+            this.threadPool[i] = ThreadFactory.create(this.queue,false, recorde);
             this.threadPool[i].start();
         }
     }
 
+    public void setRecorde(boolean r){
+        this.recorde = r;
+    }
     /**
      * 添加任务
      * @param task
@@ -75,7 +85,7 @@ public class ThreadPool {
             System.out.println("尝试扩展线程");
             for (int i = 0; i < extend; i++) {
                 if(this.threadPool[i+poolSize]==null || !this.threadPool[i+poolSize].isAlive()) {
-                    this.threadPool[i + poolSize] = ThreadFactory.create(queue, true);
+                    this.threadPool[i + poolSize] = ThreadFactory.create(queue, true, recorde);
                     this.threadPool[i + poolSize].start();
                     System.out.println("扩展线程+1");
                 }
@@ -121,35 +131,52 @@ public class ThreadPool {
         return count;
     }
 
+    public Map<Integer, String> oncloseThreads(){
+        Map<Integer, String> closeIds = new HashMap<>();
+        for (int i = 0; i < (poolSize + extend); i++) {
+            TaskThread t = this.threadPool[i];
+            if(!t.getRunning() || !this.threadPool[i].isAlive()) closeIds.put(i, t.gettId());
+        }
+        return closeIds;
+    }
+
+    public void reCreate(int idx){  // idx : the index of thread in threadpool
+        TaskThread itt = this.threadPool[idx];
+        if(itt != null && !itt.getRunning()){
+            boolean temp = idx > this.poolSize;
+            this.threadPool[idx] = ThreadFactory.create(this.queue, temp, recorde);
+            this.threadPool[idx].start();
+        }else{
+            if(itt != null){
+                System.out.printf("idx="+idx+" not exists");
+            }else {
+                System.out.printf("idx=" + idx + " is running");
+            }
+        }
+    }
     /**
      * 关闭线程池，等待任务队列计数为空，将运行线程参数running设置为false, 任务完成自动结束
      */
     public void closeService(){
         stop = true;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (queue.getCount()!=0);
-                for (int i = 0; i < (poolSize + extend); i++) {
-                    if(threadPool[i]!=null)threadPool[i].close();
-                }
-                queue = null;
-                threadPool = null;
+        new Thread(() -> {
+            while (queue.getCount()!=0);
+            for (int i = 0; i < (poolSize + extend); i++) {
+                if(threadPool[i]!=null)threadPool[i].close();
             }
+            queue = null;
+            threadPool = null;
         }).start();
     }
 
     public void shutdown(){
         stop = true;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < (poolSize + extend); i++) {
-                    if (threadPool[i] != null) threadPool[i].close();
-                }
-                queue = null;
-                threadPool = null;
+        new Thread(() -> {
+            for (int i = 0; i < (poolSize + extend); i++) {
+                if (threadPool[i] != null) threadPool[i].close();
             }
+            queue = null;
+            threadPool = null;
         }).start();
     }
 
@@ -170,5 +197,13 @@ public class ThreadPool {
                 .append(", finished: ")
                 .append(finish.get());
         return sb.toString();
+    }
+
+    public TaskThread getThread(int id){
+        if(id>poolSize+extend){
+            System.out.println("index > size");
+            return null;
+        }
+        return this.threadPool[id];
     }
 }
