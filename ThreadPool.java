@@ -62,6 +62,7 @@ public class ThreadPool {
      */
     public boolean addTask(Task task){
         if (stop){
+            //TODO 此处可替换为日志
             System.out.println("线程池已关闭");
             return false;
         }
@@ -72,6 +73,7 @@ public class ThreadPool {
             queue.push(task);
             return true;
         }else {
+            //TODO 此处可替换为日志
             System.out.println("添加失败");
             return false;
         }
@@ -82,12 +84,12 @@ public class ThreadPool {
      */
     public void extendPool(){
         if(extend>0){
-            System.out.println("尝试扩展线程");
+            System.out.println("尝试扩展线程");//TODO 此处可替换为日志
             for (int i = 0; i < extend; i++) {
                 if(this.threadPool[i+poolSize]==null || !this.threadPool[i+poolSize].isAlive()) {
                     this.threadPool[i + poolSize] = ThreadFactory.create(queue, true, recorde);
                     this.threadPool[i + poolSize].start();
-                    System.out.println("扩展线程+1");
+                    System.out.println("扩展线程+1");//TODO 此处可替换为日志
                 }
             }
 
@@ -127,6 +129,7 @@ public class ThreadPool {
         for (int i = 0; i < (poolSize + extend); i++) {
             if(this.threadPool[i].isAlive()) count++;
         }
+        //TODO 此处可替换为日志
         System.out.println("alive = "+count);
         return count;
     }
@@ -148,8 +151,10 @@ public class ThreadPool {
             this.threadPool[idx].start();
         }else{
             if(itt != null){
+                //TODO 此处可替换为日志
                 System.out.printf("idx="+idx+" not exists");
             }else {
+                //TODO 此处可替换为日志
                 System.out.printf("idx=" + idx + " is running");
             }
         }
@@ -201,6 +206,7 @@ public class ThreadPool {
 
     public TaskThread getThread(int id){
         if(id>poolSize+extend){
+            //TODO 此处可替换为日志
             System.out.println("index > size");
             return null;
         }

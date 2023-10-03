@@ -100,3 +100,5 @@ Map<Integer, String> closeIds = threadPool.oncloseThreads();
 ```java
 threadPool.getThread(idx); //idx : 线程索引
 ```
+5.新增TODO建议
+项目中一些字符串打印备注（标记为TODO）了可替换为Log

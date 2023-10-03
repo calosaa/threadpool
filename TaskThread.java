@@ -1,5 +1,7 @@
 package thread.pool;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +47,7 @@ public class TaskThread extends Thread{
             Task task = taskQueue.pop();
             waiting = false;
             if(task!=null) {
-                String exp = "";
+                String exp = ""; // exception
                 onTask = true;
                 setPriority(task.priority());
                 task.settId(this.id);
@@ -54,12 +56,13 @@ public class TaskThread extends Thread{
                     try {
                         task.run();
                     } catch (Exception e) {
-                        exp = e.getMessage();
+                        exp = e.getMessage(); //TODO 此处可修改返回异常Message或StackTrace
+                        //exp = getStackTraceAsString(e);
                     }
                     task.done();
                     ThreadPool.finish.incrementAndGet();
                 }
-                if (this.recorde) this.taskInfos.add("{info : "+task.taskInfo()+", done : "+(!task.isCanceled())+", time : "+sdf.format(System.currentTimeMillis())+", exception : "+exp+"}");
+                if (this.recorde) this.taskInfos.add("{info : "+task.taskInfo()+", done : "+(!task.isCanceled())+", time : "+sdf.format(System.currentTimeMillis())+", exception : "+exp+"}");//TODO 此行可替换为日志，则taskInfos不可用
                 onTask = false;
             }
         }
@@ -99,5 +102,12 @@ public class TaskThread extends Thread{
 
     public List<String> getTaskInfos(){
         return this.taskInfos;
+    }
+
+    public static String getStackTraceAsString(Throwable throwable) {
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        throwable.printStackTrace(printWriter);
+        return stringWriter.toString();
     }
 }

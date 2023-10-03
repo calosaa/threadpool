@@ -41,7 +41,7 @@ public abstract class Task{
     }
     public void cancel(){
         if (!this.start) this.canceled = true;
-        else System.out.println("任务已经开始执行，无法取消");
+        else System.out.println("任务已经开始执行，无法取消"); //TODO 此处可替换为日志
     }
 
     public boolean isCanceled(){
