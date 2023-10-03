@@ -22,6 +22,7 @@ public class ThreadFactory {
         if (kind == 1) {
             return new PriorityTaskQueue(limit);
         }
+        //TODO 此处可用if-else添加kind并返回自定义队列（必须继承TaskQueueInterface）
         return new TaskQueue(limit);
     }
 }
