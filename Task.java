@@ -10,6 +10,8 @@ public abstract class Task{
     private volatile boolean start = false;
     protected volatile boolean done = false;
 
+    private String log="nothing";
+
     public void settId(String thId){
         this.tId = thId;
     }
@@ -48,4 +50,11 @@ public abstract class Task{
         return this.canceled;
     }
 
+    public void setLog(String log) {
+        this.log = log;
+    }
+
+    public String getLog() {
+        return log;
+    }
 }

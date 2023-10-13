@@ -62,7 +62,11 @@ public class TaskThread extends Thread{
                     task.done();
                     ThreadPool.finish.incrementAndGet();
                 }
-                if (this.recorde) this.taskInfos.add("{info : "+task.taskInfo()+", done : "+(!task.isCanceled())+", time : "+sdf.format(System.currentTimeMillis())+", exception : "+exp+"}");//TODO 此行可替换为日志，则taskInfos不可用
+                if (this.recorde) {
+                    String log = "{thread Id : "+gettId()+", task info : "+task.taskInfo()+", isDone : "+(!task.isCanceled())+", time : "+sdf.format(System.currentTimeMillis())+", exception : "+exp+"}";
+                    this.taskInfos.add(log);//TODO 此行可替换为日志，则taskInfos不可用
+                    task.setLog(log);
+                }
                 onTask = false;
             }
         }
