@@ -104,3 +104,20 @@ threadPool.getThread(idx); //idx : 线程索引
 项目中一些字符串打印备注（标记为TODO）了可替换为Log，可以在ThreadFactory中#createTaskQueue方法添加自定义任务队列
 ### 2023/10/13 更新
 task类可直接获取log > task.getLog()
+
+### 204/2/12 更新
+1. extendPool()由无返回值修改为返回int值，该值表示实际扩展线程数量
+2. 可自定义阻塞队列添加任务的方式
+使用方法：调用ThreadPool.addTask(Task task,AddHandler handler)方法，传入自定义handler（实现AddHandler接口),该接口传入阻塞队列，当前添加任务，以及ThreadPool.extendPool()方法。
+在handler中使用ThreadPool.extendPool()方法：
+```java
+boolean handle(TaskQueueInterface queue, Task task, ExtendPoolInterface extend) {
+    //do something
+    //使用传入参数extend
+    int extendCount = extend.extendPool();
+    //do something and return
+    
+}
+
+```
+关于有些任务占用过长时间，建议另启动新线程池，不要混用

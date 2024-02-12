@@ -5,6 +5,8 @@ public interface TaskQueueInterface {
     Task pop();
     int getCount();
 
+    int getSize();
+
     boolean isEmpty();
 
 

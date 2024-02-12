@@ -95,6 +95,11 @@ public class PriorityTaskQueue implements TaskQueueInterface{
     }
 
     @Override
+    public int getSize() {
+        return limit;
+    }
+
+    @Override
     public boolean isEmpty() {
         return getCount()==0;
     }

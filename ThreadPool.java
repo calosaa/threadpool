@@ -1,12 +1,10 @@
 package thread.pool;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ThreadPool {
+public class ThreadPool implements ExtendPoolInterface{
 
     public static final int MINIMUM_CAPACITY = 3;// 任务队列的最小容量，当当前任务计数小于此值时，自动关闭扩展池，详见 #TaskThread.checkTaskContains()
 
@@ -79,10 +77,19 @@ public class ThreadPool {
         }
     }
 
+    public boolean addTask(Task task, AddHandler handler){
+        if (stop){
+            //TODO 此处可替换为日志
+            System.out.println("线程池已关闭");
+            return false;
+        }
+        return handler.handle(queue, task,this);
+    }
     /**
      * 扩展线程池数量（增加临时线程），扩展数量<extend，默认为0
      */
-    public void extendPool(){
+    public int extendPool(){
+        int eCount = 0;
         if(extend>0){
             System.out.println("尝试扩展线程");//TODO 此处可替换为日志
             for (int i = 0; i < extend; i++) {
@@ -90,10 +97,12 @@ public class ThreadPool {
                     this.threadPool[i + poolSize] = ThreadFactory.create(queue, true, recorde);
                     this.threadPool[i + poolSize].start();
                     System.out.println("扩展线程+1");//TODO 此处可替换为日志
+                    eCount += 1;
                 }
             }
 
         }
+        return eCount;
     }
 
     /**
